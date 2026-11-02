@@ -1,12 +1,12 @@
 # Mahima's Birthday Scrapbook ♡
 
-A pastel, Snoopy-inspired birthday website for Mahima. The opening five scenes use a 16:9 scrapbook composition; the letter and “10 Things I Love About You” continue as long, vertical pages.
+A pastel, kitten-sticker birthday website for Mahima. The opening five scenes use a 16:9 scrapbook composition; the letter and “10 Things I Love About You” continue as long, vertical pages.
 
 ## Experience
 
-1. **The message** — baby-blue gingham, hand-drawn beagle illustration and note.
+1. **The message** — baby-blue gingham, kitten sticker artwork and note.
 2. **The invitation** — accept / decline interaction.
-3. **November calendar** — choose November 08 or November 26.
+3. **November calendar** — choose November 08 or July 28.
 4. **Make a wish** — tap the candle to blow it out.
 5. **The keepsake** — diamond pattern, tilted polaroid and birthday badge.
 6. **The letter** — cream-to-blue gradient, circular photo frame and personal birthday letter.
