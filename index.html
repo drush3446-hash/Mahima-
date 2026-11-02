@@ -424,102 +424,105 @@ $("#cake").addEventListener("click",blowCandle);$("#cake").addEventListener("key
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+
 <style>
-/* Show the complete original portrait instead of clipping faces or bodies */
-.reason-panel .photo-slot{height:auto!important;min-height:0!important;aspect-ratio:auto!important;display:block!important;padding:7px!important;overflow:visible!important;background:#fffdf8!important}
-.reason-panel .photo-slot img{display:block;width:100%;height:auto;max-height:68vh;object-fit:contain;object-position:center center;background:#fffdf8}
-.polaroid-photo img{display:block;width:100%;height:auto;max-height:55vh;object-fit:contain;object-position:center;background:#fffdf8}
-.photo-fullscreen{position:fixed;inset:0;z-index:9999;background:#101923f2;display:none;align-items:center;justify-content:center;padding:18px}
-.photo-fullscreen.open{display:flex}
-.photo-fullscreen img{max-width:100%;max-height:90vh;width:auto;height:auto;object-fit:contain}
-.photo-fullscreen button{position:absolute;top:16px;right:18px;border:0;border-radius:50%;width:42px;height:42px;background:#fff;color:#263f57;font-size:25px}
+/* Photo editor: every selected image stays fully inside its own frame */
+.photo-slot{height:clamp(150px,24vw,260px)!important;min-height:0!important;aspect-ratio:auto!important;overflow:hidden!important;display:grid!important;place-items:center!important;padding:7px!important;background:#fffdf8!important}
+.photo-slot img,.polaroid-photo img{display:block;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain!important;object-position:center!important;background:#fffdf8}
+.polaroid-photo{height:210px;overflow:hidden;display:grid;place-items:center}
+.round-photo .photo-slot{height:100%!important;width:100%;aspect-ratio:1/1;overflow:hidden!important;border-radius:50%}
+#photoEditorOpen{position:fixed;right:16px;bottom:16px;z-index:80;border:1px solid #9eb9cc;border-radius:999px;padding:13px 18px;background:#fffdf5;color:#526f86;font:700 13px var(--sans);box-shadow:0 6px 22px #526a7e30}
+#photoEditor{position:fixed;inset:0;z-index:1000;display:none;align-items:flex-end;justify-content:center;background:#23384bb8;padding:12px}
+#photoEditor.open{display:flex}
+#photoEditor .editor-card{width:min(760px,100%);max-height:92vh;overflow:auto;background:#fffdf7;border:1px solid #b8cbd8;border-radius:22px;padding:20px;box-shadow:0 20px 70px #152b3c55}
+#photoEditor h2{margin:0 0 6px;font:30px var(--hand);color:#607f98}
+#photoEditor .editor-intro{font:14px/1.6 var(--sans);color:#748391;margin:0 0 14px}
+#photoEditor .editor-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0 18px}
+#photoEditor input[type=file]{max-width:100%;font:12px var(--sans);color:#607f98}
+#photoEditor .editor-row{display:grid;grid-template-columns:64px minmax(90px,1fr) minmax(150px,1.4fr);gap:12px;align-items:center;padding:10px 0;border-top:1px solid #e5e9e9}
+#photoEditor .editor-thumb{width:64px;height:64px;object-fit:contain;background:#edf4f7;border:1px solid #d7e2e8;border-radius:8px}
+#photoEditor .editor-label{font:700 13px var(--sans);color:#536e82;overflow-wrap:anywhere}
+#photoEditor select{width:100%;min-width:0;padding:10px;border:1px solid #c5d6df;border-radius:10px;background:white;color:#40596c;font:12px var(--sans)}
+#photoEditor .editor-close{position:sticky;bottom:0;display:flex;justify-content:flex-end;gap:10px;padding-top:14px;background:#fffdf7}
+#photoEditor .editor-close button{border:1px solid #9eb9cc;border-radius:999px;padding:12px 20px;background:#eaf3f8;color:#4e6a80;font-weight:700}
+#photoEditorStatus{font:12px var(--sans);color:#7892a5}
+@media(max-width:520px){#photoEditor{padding:0}#photoEditor .editor-card{max-height:94dvh;border-radius:20px 20px 0 0;padding:16px}#photoEditor .editor-row{grid-template-columns:52px minmax(75px,1fr);gap:8px}#photoEditor .editor-thumb{width:52px;height:52px}#photoEditor .editor-row select{grid-column:1/-1}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<button id="photoEditorOpen" type="button">Set Photos ♡</button>
+<div id="photoEditor" role="dialog" aria-modal="true" aria-label="Mahima photo editor">
+ <div class="editor-card">
+  <h2>Set Mahima's Photos ♡</h2>
+  <p class="editor-intro">Har frame ke saamne dropdown se apni pasand ki photo select karo. Photo poori frame ke andar fit hogi—crop ya stretch nahi hogi. Ek hi photo multiple frames mein bhi use kar sakte ho.</p>
+  <div class="editor-tools">
+   <label><strong>Apni photos add karo:</strong> <input id="extraPhotoFiles" type="file" accept="image/*" multiple></label>
+   <span id="photoEditorStatus" aria-live="polite">Photos load ho rahi hain…</span>
+  </div>
+  <div id="photoEditorRows"></div>
+  <div class="editor-close"><button id="photoEditorDone" type="button">Done ♡</button></div>
+ </div>
+</div>
 <script>
-(async function loadMahimaPhotos(){
-  const status=document.createElement("div");
-  status.setAttribute("aria-live","polite");
-  status.style.cssText="position:fixed;bottom:10px;left:10px;z-index:50;padding:7px 11px;border-radius:20px;background:#fffdf0e8;color:#607f98;font:12px Arial;box-shadow:0 3px 12px #526a7e22";
-  status.textContent="Loading Mahima's original photos…";document.body.appendChild(status);
-  try{
-    const response=await fetch("./mahima.zip");
-    if(!response.ok)throw new Error("Archive unavailable");
-    const zip=await JSZip.loadAsync(await response.blob());
-    const files=Object.values(zip.files).filter(f=>!f.dir&&/\.(jpe?g|png|webp|gif|avif)$/i.test(f.name)).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"}));
-    if(!files.length)throw new Error("No image files in ZIP");
-    const photos=await Promise.all(files.map(async f=>({name:f.name,url:URL.createObjectURL(await f.async("blob"))})));
-    let index=0;
-    function nextPhoto(hint){
-      const words=(hint||"").toLowerCase().split(/[-_\s]+/).filter(Boolean);
-      let found=words.length?photos.find(p=>!p.used&&words.some(w=>p.name.toLowerCase().includes(w))):null;
-      if(!found)found=photos.find(p=>!p.used);
-      if(!found){photos.forEach(p=>p.used=false);found=photos[index%photos.length]}
-      found.used=true;index++;return found;
-    }
-    const viewer=document.createElement("div");viewer.className="photo-fullscreen";viewer.innerHTML='<button type="button" aria-label="Close">×</button><img alt="Mahima photo full view">';
-    document.body.appendChild(viewer);
-    const viewerImg=viewer.querySelector("img");
-    const close=()=>viewer.classList.remove("open");
-    viewer.querySelector("button").addEventListener("click",close);
-    viewer.addEventListener("click",e=>{if(e.target===viewer)close()});
-    document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});
-    function put(slot,hint){
-      const p=nextPhoto(hint),img=document.createElement("img");
-      img.src=p.url;img.alt="Mahima — "+p.name;img.loading="lazy";
-      img.addEventListener("click",()=>{viewerImg.src=p.url;viewer.classList.add("open")});
-      slot.replaceChildren(img);slot.style.background="#fffdf8";slot.dataset.loadedPhoto=p.name;
-      slot.title="Tap to view full photo";
-    }
-    const polaroid=document.querySelector(".polaroid-photo");if(polaroid)put(polaroid,"portrait");
-    document.querySelectorAll(".reason-panel .photo-slot").forEach(slot=>put(slot,slot.dataset.photo||""));
-    status.textContent=photos.length+" original photos loaded · tap any photo to view full size ♡";
-    setTimeout(()=>status.remove(),7000);
-  }catch(e){status.textContent="Photo archive could not be opened — please refresh";console.error(e)}
-})();
-</script>
-<script>
-(async function loadMahimaPhotos(){
-  const photoStatus = document.createElement("div");
-  photoStatus.setAttribute("aria-live","polite");
-  photoStatus.style.cssText = "position:fixed;bottom:10px;left:10px;z-index:50;padding:7px 11px;border-radius:20px;background:#fffdf0e8;color:#607f98;font:12px Arial;box-shadow:0 3px 12px #526a7e22";
-  photoStatus.textContent = "Loading Mahima's photos…";
-  document.body.appendChild(photoStatus);
-  try {
-    const response = await fetch("./mahima.zip");
-    if (!response.ok) throw new Error("Photo archive could not be loaded");
-    const zip = await JSZip.loadAsync(await response.blob());
-    const files = Object.values(zip.files).filter(f => !f.dir && /\.(jpe?g|png|webp|gif|avif)$/i.test(f.name)).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"}));
-    if (!files.length) throw new Error("No image files found in the archive");
-    const photos = await Promise.all(files.map(async file => ({name:file.name, url:URL.createObjectURL(await file.async("blob"))})));
-    const used = new Set();
-    function choosePhoto(hint){
-      const terms = (hint || "").toLowerCase().split(/[-_\s]+/).filter(Boolean);
-      let found = terms.length ? photos.find(p=>!used.has(p.name) && terms.some(t=>p.name.toLowerCase().includes(t))) : null;
-      if (!found) found = photos.find(p=>!used.has(p.name));
-      if (!found) found = photos[used.size % photos.length];
-      used.add(found.name);
-      return found;
-    }
-    function insertPhoto(slot, hint){
-      const photo = choosePhoto(hint);
-      const img = document.createElement("img");
-      img.src = photo.url;
-      img.alt = "Mahima — " + (hint || photo.name);
-      img.loading = "lazy";
-      img.style.cssText = "width:100%;height:100%;object-fit:contain;display:block;background:#fffdf8";
-      slot.replaceChildren(img);
-      slot.style.background = "#fffdf8";
-      slot.style.padding = "4px";
-      slot.dataset.loadedPhoto = photo.name;
-    }
-    const polaroid = document.querySelector(".polaroid-photo");
-    if (polaroid) insertPhoto(polaroid, "portrait");
-    document.querySelectorAll(".photo-slot").forEach(slot => insertPhoto(slot, slot.dataset.photo || ""));
-    photoStatus.textContent = photos.length + " Mahima photos loaded ♡";
-    setTimeout(()=>photoStatus.remove(),5000);
-  } catch (error) {
-    photoStatus.textContent = "Photos couldn't load — refresh once";
-    console.error("Mahima photo archive:", error);
-  }
+(async function(){
+ const openBtn=document.getElementById("photoEditorOpen"),editor=document.getElementById("photoEditor");
+ const rows=document.getElementById("photoEditorRows"),status=document.getElementById("photoEditorStatus");
+ const slots=[...document.querySelectorAll(".polaroid-photo,.round-photo .photo-slot,.reason-panel .photo-slot")];
+ const names=slots.map((slot,i)=>{
+   if(slot.classList.contains("polaroid-photo"))return "Birthday Polaroid";
+   if(slot.closest(".round-photo"))return "Letter Portrait";
+   const panel=slot.closest(".reason-panel");
+   const title=panel?.querySelector(".reason-title")?.textContent?.trim()||"Photo";
+   const same=[...panel.querySelectorAll(".photo-slot")].indexOf(slot)+1;
+   return title+(panel.querySelectorAll(".photo-slot").length>1?" — Photo "+same:"");
+ });
+ let photos=[];
+ const storedKey="mahima-photo-choices-v2";
+ const saved=(()=>{try{return JSON.parse(localStorage.getItem(storedKey)||"{}")}catch{return {}}})();
+ function addPhoto(name,url){photos.push({name,url});}
+ function apply(slotIndex,photoIndex){
+   const slot=slots[slotIndex],p=photos[photoIndex];
+   if(!slot||!p)return;
+   const img=document.createElement("img");img.src=p.url;img.alt="Mahima — "+p.name;img.loading="lazy";
+   slot.replaceChildren(img);slot.dataset.selectedPhoto=p.name;
+   saved[slotIndex]=p.name;
+   try{localStorage.setItem(storedKey,JSON.stringify(saved))}catch{}
+   const thumb=document.querySelector('[data-preview="'+slotIndex+'"]');if(thumb)thumb.src=p.url;
+ }
+ function buildRows(){
+   rows.replaceChildren();
+   slots.forEach((slot,i)=>{
+     const row=document.createElement("div");row.className="editor-row";
+     const thumb=document.createElement("img");thumb.className="editor-thumb";thumb.alt="Selected preview";thumb.dataset.preview=i;
+     const current=slot.querySelector("img");thumb.src=current?.src||"";
+     const label=document.createElement("div");label.className="editor-label";label.textContent=names[i];
+     const select=document.createElement("select");select.setAttribute("aria-label","Choose photo for "+names[i]);
+     const empty=document.createElement("option");empty.value="";empty.textContent="— Photo choose karo —";select.append(empty);
+     photos.forEach((p,j)=>{const opt=document.createElement("option");opt.value=String(j);opt.textContent=(j+1)+". "+p.name;select.append(opt)});
+     const selected=saved[i];if(selected){const found=photos.findIndex(p=>p.name===selected);if(found>=0){select.value=String(found);thumb.src=photos[found].url;}}
+     select.addEventListener("change",()=>{if(select.value!==""){apply(i,Number(select.value));thumb.src=photos[Number(select.value)].url;}});
+     row.append(thumb,label,select);rows.append(row);
+   });
+ }
+ try{
+   const response=await fetch("./mahima.zip");
+   if(!response.ok)throw new Error("mahima.zip unavailable");
+   const zip=await JSZip.loadAsync(await response.blob());
+   const files=Object.values(zip.files).filter(f=>!f.dir&&/\.(jpe?g|png|webp|gif|avif)$/i.test(f.name)).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"}));
+   for(const f of files)addPhoto(f.name,URL.createObjectURL(await f.async("blob")));
+   status.textContent=photos.length+" archive photos ready — choose each frame below.";
+ }catch(e){status.textContent="ZIP load nahi hua. Neeche se photos add kar sakte ho.";}
+ document.getElementById("extraPhotoFiles").addEventListener("change",event=>{
+   for(const file of [...event.target.files])if(file.type.startsWith("image/"))addPhoto(file.name,URL.createObjectURL(file));
+   status.textContent=photos.length+" photos ready. Ab dropdown se set karo.";
+   buildRows();
+ });
+ buildRows();
+ // Restore only the user's saved selections; never guess which photo belongs in a frame.
+ slots.forEach((slot,i)=>{const chosen=saved[i];const index=photos.findIndex(p=>p.name===chosen);if(index>=0)apply(i,index)});
+ openBtn.addEventListener("click",()=>{buildRows();editor.classList.add("open")});
+ document.getElementById("photoEditorDone").addEventListener("click",()=>editor.classList.remove("open"));
+ editor.addEventListener("click",e=>{if(e.target===editor)editor.classList.remove("open")});
+ document.addEventListener("keydown",e=>{if(e.key==="Escape")editor.classList.remove("open")});
 })();
 </script>
 </body>
