@@ -317,7 +317,7 @@ button{font:inherit}
 </style>
 </head>
 <body>
-<div class="topbar"><a class="brand" href="#page-1">Mahima's little scrapbook ♡</a><span>MADE BY ADNAN · JUST FOR MAHIMA ♡</span></div>
+<div class="topbar"><a class="brand" href="#page-1">Mahima's little scrapbook ♡</a><span>MADE BY DAWOOD · JUST FOR MAHIMA ♡</span></div>
 <div class="progress" id="progress"></div>
 <main>
 <section class="scene gingham" id="page-1" aria-label="Page 1, a message from Kitty">
@@ -344,7 +344,7 @@ button{font:inherit}
 <div class="calendar-wrap">
 <div class="calendar-dog">
 <div class="cat-mascot cat-3" role="img" aria-label="Cute kitten sticker"></div><p class="hand">a little date picker ♡</p></div>
-<div class="calendar-card"><p class="month">SPECIAL DATES ♡</p><div class="dates"><button class="date-choice" data-date="08" data-month="November" aria-pressed="false"><strong>08</strong><small>NOV</small></button><button class="date-choice" data-date="28" data-month="July" aria-pressed="false"><strong>28</strong><small>JUL</small></button></div><p class="selected-date" id="date-message" aria-live="polite">choose the date that feels right</p></div>
+<div class="calendar-card"><p class="month">SPECIAL DATES ♡</p><div class="dates"><button class="date-choice" data-date="13" data-month="May" aria-pressed="false"><strong>13</strong><small>MAY</small></button><button class="date-choice" data-date="25" data-month="December" aria-pressed="false"><strong>25</strong><small>DEC</small></button></div><p class="selected-date" id="date-message" aria-live="polite">choose the date that feels right</p></div>
 </div>
 <p class="caption">kitty wants to know what day is today</p>
 <a class="next-link" href="#page-4">next little surprise <span>♡ →</span></a>
@@ -407,7 +407,7 @@ button{font:inherit}
 <article class="reason-panel final-reason"><div class="reason-copy"><span class="reason-number">10</span><h2 class="reason-title">Simply being you</h2><p>No extra reason needed. You're enough, exactly as you are.</p></div><div class="collage one"><div class="photo-slot art-slot art-crop-3" data-photo="you" data-art="cherry"><span class="photo-placeholder">MAHIMA'S PHOTO ♡</span></div></div><p class="final-line">I love you, Mahima. ♡</p></article>
 </div>
 <div class="footer-doodle"><span>and a little wave from Kitty</span><div class="cat-mascot cat-1" role="img" aria-label="Cute kitten sticker"></div></div>
-<p class="photo-help">Every photo space is ready for Mahima's real pictures — smile photo for “Your smile”, eye close-up for “Your eyes”, and so on.</p>
+
 </section>
 </main>
 <script>
@@ -424,106 +424,53 @@ $("#cake").addEventListener("click",blowCandle);$("#cake").addEventListener("key
 </script>
 
 
-<style>
-/* Shape-cutout photos: eyes stay inside the circular white frame; voice inside its arch frame */
-.reason-panel:nth-child(2) .art-slot{
-  border-radius:50%!important;
-  overflow:hidden!important;
-  aspect-ratio:1/1!important;
-  padding:7px!important;
-}
-.reason-panel:nth-child(2) .art-slot img{
-  width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
-  object-fit:cover!important;object-position:center!important;
-  border-radius:50%!important;
-}
-.reason-panel:nth-child(7) .art-slot{
-  border-radius:46% 46% 5px 5px!important;
-  overflow:hidden!important;
-  padding:7px!important;
-}
-.reason-panel:nth-child(7) .art-slot img{
-  width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
-  object-fit:cover!important;object-position:center!important;
-  border-radius:inherit!important;
-}
-/* Bring Mahima's portrait closer to the birthday heading */
-.round-photo{margin-top:12px!important;margin-bottom:36px!important}
-@media(max-width:760px){.round-photo{margin-top:8px!important;margin-bottom:26px!important}}
-</style>
+
+
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 
+
 <style>
-/* Photo editor: every selected image stays fully inside its own frame */
-.photo-slot{height:clamp(150px,24vw,260px)!important;min-height:0!important;aspect-ratio:auto!important;overflow:hidden!important;display:grid!important;place-items:center!important;padding:7px!important;background:#fffdf8!important}
-.photo-slot img,.polaroid-photo img{display:block;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain!important;object-position:center!important;background:#fffdf8}
-.polaroid-photo{height:210px;overflow:hidden;display:grid;place-items:center}
-.round-photo .photo-slot{height:100%!important;width:100%;aspect-ratio:1/1;overflow:hidden!important;border-radius:50%}
-#photoEditorOpen{position:fixed;right:16px;bottom:16px;z-index:80;border:1px solid #9eb9cc;border-radius:999px;padding:13px 18px;background:#fffdf5;color:#526f86;font:700 13px var(--sans);box-shadow:0 6px 22px #526a7e30}
-#photoEditor{position:fixed;inset:0;z-index:1000;display:none;align-items:flex-end;justify-content:center;background:#23384bb8;padding:12px}
-#photoEditor.open{display:flex}
-#photoEditor .editor-card{width:min(760px,100%);max-height:92vh;overflow:auto;background:#fffdf7;border:1px solid #b8cbd8;border-radius:22px;padding:20px;box-shadow:0 20px 70px #152b3c55}
-#photoEditor h2{margin:0 0 6px;font:30px var(--hand);color:#607f98}
-#photoEditor .editor-intro{font:14px/1.6 var(--sans);color:#748391;margin:0 0 14px}
-#photoEditor .editor-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0 18px}
-#photoEditor input[type=file]{max-width:100%;font:12px var(--sans);color:#607f98}
-#photoEditor .editor-row{display:grid;grid-template-columns:64px minmax(90px,1fr) minmax(150px,1.4fr);gap:12px;align-items:center;padding:10px 0;border-top:1px solid #e5e9e9}
-#photoEditor .editor-thumb{width:64px;height:64px;object-fit:contain;background:#edf4f7;border:1px solid #d7e2e8;border-radius:8px}
-#photoEditor .editor-label{font:700 13px var(--sans);color:#536e82;overflow-wrap:anywhere}
-#photoEditor select{width:100%;min-width:0;padding:10px;border:1px solid #c5d6df;border-radius:10px;background:white;color:#40596c;font:12px var(--sans)}
-#photoEditor .editor-close{position:sticky;bottom:0;display:flex;justify-content:flex-end;gap:10px;padding-top:14px;background:#fffdf7}
-#photoEditor .editor-close button{border:1px solid #9eb9cc;border-radius:999px;padding:12px 20px;background:#eaf3f8;color:#4e6a80;font-weight:700}
-#photoEditorStatus{font:12px var(--sans);color:#7892a5}
-@media(max-width:520px){#photoEditor{padding:0}#photoEditor .editor-card{max-height:94dvh;border-radius:20px 20px 0 0;padding:16px}#photoEditor .editor-row{grid-template-columns:52px minmax(75px,1fr);gap:8px}#photoEditor .editor-thumb{width:52px;height:52px}#photoEditor .editor-row select{grid-column:1/-1}}
-</style>
-<style>
-/* Never crop Mahima: show the complete original image in every photo frame. */
-.photo-slot img,.polaroid-photo img,.round-photo .photo-slot img,.reason-panel .art-slot img{object-fit:contain!important;object-position:center center!important;transform:none!important;max-width:100%!important;max-height:100%!important}
+/* Keep every original Mahima photo completely visible without cropping. */
+.photo-slot,.polaroid-photo{overflow:hidden;display:grid;place-items:center}
+.photo-slot img,.polaroid-photo img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center!important;transform:none!important;background:#fffdf8}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-<button id="photoEditorOpen" type="button">Set Photos ♡</button>
-<div id="photoEditor" role="dialog" aria-modal="true" aria-label="Mahima photo editor">
- <div class="editor-card">
-  <h2>Set Mahima's Photos ♡</h2>
-  <p class="editor-intro">Har frame ke saamne dropdown se apni pasand ki photo select karo. Photo poori frame ke andar fit hogi—crop ya stretch nahi hogi. Ek hi photo multiple frames mein bhi use kar sakte ho.</p>
-  <div class="editor-tools">
-   <label><strong>Apni photos add karo:</strong> <input id="extraPhotoFiles" type="file" accept="image/*" multiple></label>
-   <span id="photoEditorStatus" aria-live="polite">Photos load ho rahi hain…</span>
-  </div>
-  <div id="photoEditorRows"></div>
-  <div class="editor-close"><button id="photoEditorDone" type="button">Done ♡</button></div>
- </div>
-</div>
 <script>
 (async function(){
- const openBtn=document.getElementById("photoEditorOpen"),editor=document.getElementById("photoEditor"),rows=document.getElementById("photoEditorRows"),status=document.getElementById("photoEditorStatus");
- if(!openBtn||!editor||!rows||!status)return;
  const slots=[...document.querySelectorAll(".polaroid-photo,.round-photo .photo-slot,.reason-panel .photo-slot")];
- const names=slots.map((slot,i)=>{if(slot.classList.contains("polaroid-photo"))return "Birthday Polaroid";if(slot.closest(".round-photo"))return "Letter Portrait";const p=slot.closest(".reason-panel"),t=p?.querySelector(".reason-title")?.textContent?.trim()||"Photo";return t+(p.querySelectorAll(".photo-slot").length>1?" — Photo "+([...p.querySelectorAll(".photo-slot")].indexOf(slot)+1):"")});
- let photos=[];
- const choiceKey="mahima-photo-choices-v2",editKey="mahima-photo-edits-v1";
- const read=(key)=>{try{return JSON.parse(localStorage.getItem(key)||"{}")}catch{return {}}};
- const saved=read(choiceKey),edits=read(editKey);
- const defaults=()=>({fit:"contain",zoom:1,x:50,y:50,rotate:0,flipX:1,flipY:1,brightness:100,contrast:100,saturate:100,grayscale:0});
- function persist(key,data){try{localStorage.setItem(key,JSON.stringify(data))}catch{status.textContent="Browser storage full hai; kuch extra photos remove karo."}}
- function styleImg(img,i){const e={...defaults(),...(edits[i]||{})};img.style.setProperty("object-fit","contain","important");img.style.setProperty("object-position","center center","important");img.style.setProperty("transform","none","important");img.style.setProperty("filter","brightness("+e.brightness+"%) contrast("+e.contrast+"%) saturate("+e.saturate+"%) grayscale("+e.grayscale+"%)","important");img.style.transformOrigin="center center"}
- function apply(i,j){const p=photos[j],slot=slots[i];if(!p||!slot)return;const img=document.createElement("img");img.src=p.url;img.alt="Mahima — "+p.name;img.loading="lazy";styleImg(img,i);slot.replaceChildren(img);saved[i]=p.name;persist(choiceKey,saved);const th=document.querySelector('[data-preview="'+i+'"]');if(th)th.src=p.url}
- function update(i,key,val){edits[i]={...defaults(),...(edits[i]||{}),[key]:val};persist(editKey,edits);const img=slots[i]?.querySelector("img");if(img)styleImg(img,i)}
- function range(parent,i,label,key,min,max,step,suffix){const wrap=document.createElement("label");wrap.className="photo-control";const line=document.createElement("span");line.className="photo-control-line";const name=document.createElement("b");name.textContent=label;const out=document.createElement("output");const input=document.createElement("input");input.type="range";input.min=min;input.max=max;input.step=step;input.value=(edits[i]||defaults())[key];out.textContent=input.value+suffix;line.append(name,out);input.addEventListener("input",()=>{out.textContent=input.value+suffix;update(i,key,Number(input.value))});wrap.append(line,input);parent.append(wrap)}
- function buildPanel(panel,i){panel.replaceChildren();const e={...defaults(),...(edits[i]||{})};const grid=document.createElement("div");grid.className="photo-edit-tools";const fit=document.createElement("select");fit.setAttribute("aria-label","Photo fit mode");[["contain","Show full photo — no crop"]].forEach(([v,t])=>{const o=document.createElement("option");o.value=v;o.textContent=t;fit.append(o)});fit.value="contain";fit.disabled=true;const fitWrap=document.createElement("label");fitWrap.className="photo-control photo-fit";fitWrap.textContent="Frame mode ";fitWrap.append(fit);grid.append(fitWrap);
- range(grid,i,"Brightness","brightness",0,200,1,"%");range(grid,i,"Contrast","contrast",0,200,1,"%");range(grid,i,"Saturation","saturate",0,200,1,"%");range(grid,i,"Black & white","grayscale",0,100,1,"%");
- const actions=document.createElement("div");actions.className="photo-edit-actions";[["Reset adjustments",()=>{delete edits[i];persist(editKey,edits);buildPanel(panel,i);const img=slots[i]?.querySelector("img");if(img)styleImg(img,i)}]].forEach(([label,fn])=>{const btn=document.createElement("button");btn.type="button";btn.textContent=label;btn.addEventListener("click",()=>{fn();if(label!=="Reset all")buildPanel(panel,i)});actions.append(btn)});panel.append(grid,actions)}
- function buildRows(){rows.replaceChildren();slots.forEach((slot,i)=>{const row=document.createElement("div");row.className="editor-row";const top=document.createElement("div");top.className="editor-row-main";const thumb=document.createElement("img");thumb.className="editor-thumb";thumb.alt="Selected preview";thumb.dataset.preview=i;thumb.src=slot.querySelector("img")?.src||"";const label=document.createElement("div");label.className="editor-label";label.textContent=names[i];const select=document.createElement("select");select.setAttribute("aria-label","Choose photo for "+names[i]);const empty=document.createElement("option");empty.value="";empty.textContent="— Photo choose karo —";select.append(empty);photos.forEach((p,j)=>{const o=document.createElement("option");o.value=String(j);o.textContent=(j+1)+". "+p.name;select.append(o)});const found=photos.findIndex(p=>p.name===saved[i]);if(found>=0){select.value=String(found);thumb.src=photos[found].url}const panel=document.createElement("div");panel.className="photo-edit-panel";panel.hidden=true;select.addEventListener("change",()=>{if(select.value!==""){delete edits[i];persist(editKey,edits);apply(i,Number(select.value));thumb.src=photos[Number(select.value)].url;buildPanel(panel,i)}});const toggle=document.createElement("button");toggle.type="button";toggle.className="photo-edit-toggle";toggle.textContent="Edit photo ✎";toggle.addEventListener("click",()=>{panel.hidden=!panel.hidden;toggle.textContent=panel.hidden?"Edit photo ✎":"Close editor ×";if(!panel.hidden)buildPanel(panel,i)});top.append(thumb,label,select,toggle);row.append(top,panel);rows.append(row)})}
- // Bind opening immediately: the modal must work even if ZIP loading is slow or fails.
- openBtn.addEventListener("click",()=>{buildRows();editor.classList.add("open")});
- document.getElementById("photoEditorDone")?.addEventListener("click",()=>editor.classList.remove("open"));
- editor.addEventListener("click",e=>{if(e.target===editor)editor.classList.remove("open")});
- document.addEventListener("keydown",e=>{if(e.key==="Escape")editor.classList.remove("open")});
- status.textContent="Photo editor ready. Archive photos load ho rahi hain…";
- buildRows();
- try{const response=await fetch("./mahima.zip");if(!response.ok)throw Error("ZIP unavailable");if(typeof JSZip==="undefined")throw Error("ZIP reader unavailable");const zip=await JSZip.loadAsync(await response.blob());const files=Object.values(zip.files).filter(f=>!f.dir&&/\.(jpe?g|png|webp|gif|avif)$/i.test(f.name)).sort((x,y)=>x.name.localeCompare(y.name,undefined,{numeric:true,sensitivity:"base"}));for(const f of files)photos.push({name:f.name,url:URL.createObjectURL(await f.async("blob"))});status.textContent=photos.length+" archive photos ready. Select a photo, then Edit photo.";buildRows();slots.forEach((slot,i)=>{const j=photos.findIndex(p=>p.name===saved[i]);if(j>=0)apply(i,j)})}catch(e){status.textContent="ZIP load nahi hua. Apni photos add karke bhi editor use kar sakte ho.";console.error("Photo archive load:",e)}
- document.getElementById("extraPhotoFiles")?.addEventListener("change",event=>{for(const f of [...event.target.files])if(f.type.startsWith("image/"))photos.push({name:f.name,url:URL.createObjectURL(f)});status.textContent=photos.length+" photos ready.";buildRows()});
+ try{
+  const response=await fetch("./mahima.zip");if(!response.ok)throw new Error("Photo archive unavailable");
+  if(typeof JSZip==="undefined")throw new Error("ZIP reader unavailable");
+  const zip=await JSZip.loadAsync(await response.blob());
+  const files=Object.values(zip.files).filter(f=>!f.dir&&/\.(jpe?g|png|webp|gif|avif)$/i.test(f.name)).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"}));
+  if(!files.length)throw new Error("No photos found");
+  const photos=[];for(const f of files)photos.push({name:f.name,url:URL.createObjectURL(await f.async("blob"))});
+  const used=new Set();
+  function termsFor(slot){
+   const raw=(slot.dataset.photo||slot.closest(".reason-panel")?.querySelector(".reason-title")?.textContent||"portrait").toLowerCase();
+   const words=[raw.replace(/[^a-z0-9]+/g," ")];
+   if(/eye/.test(raw))words.push("eyes","eye");
+   if(/smile/.test(raw))words.push("smile","smiling");
+   if(/laugh/.test(raw))words.push("laugh","happy");
+   if(/heart|kind/.test(raw))words.push("heart","kind","love");
+   if(/habit/.test(raw))words.push("habit","cute");
+   if(/strength/.test(raw))words.push("strength","strong");
+   if(/voice/.test(raw))words.push("voice");
+   if(/dream/.test(raw))words.push("dream");
+   if(/presence/.test(raw))words.push("presence");
+   return words;
+  }
+  function pick(slot,index){
+   const terms=termsFor(slot);let best=-1,score=0;
+   photos.forEach((p,j)=>{if(used.has(j))return;const n=p.name.toLowerCase().replace(/[^a-z0-9]+/g," ");const v=terms.reduce((a,t)=>a+(t&&n.includes(t)?1:0),0);if(v>score){score=v;best=j}});
+   if(best<0)best=photos.findIndex((_,j)=>!used.has(j));if(best<0)best=index%photos.length;used.add(best);return best;
+  }
+  slots.forEach((slot,i)=>{const p=photos[pick(slot,i)],img=document.createElement("img");img.src=p.url;img.alt="Mahima photo";img.loading="lazy";slot.replaceChildren(img)});
+  console.info("[Mahima photos] "+photos.length+" archive photos assigned to "+slots.length+" frames.");
+ }catch(e){console.error("[Mahima photos]",e)}
 })();
 </script>
 </body>
