@@ -423,6 +423,35 @@ function blowCandle(){const flame=$("#flame");if(flame.classList.contains("out")
 $("#cake").addEventListener("click",blowCandle);$("#cake").addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();blowCandle();}});
 </script>
 
+
+<style>
+/* Shape-cutout photos: eyes stay inside the circular white frame; voice inside its arch frame */
+.reason-panel:nth-child(2) .art-slot{
+  border-radius:50%!important;
+  overflow:hidden!important;
+  aspect-ratio:1/1!important;
+  padding:7px!important;
+}
+.reason-panel:nth-child(2) .art-slot img{
+  width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+  object-fit:cover!important;object-position:center!important;
+  border-radius:50%!important;
+}
+.reason-panel:nth-child(7) .art-slot{
+  border-radius:46% 46% 5px 5px!important;
+  overflow:hidden!important;
+  padding:7px!important;
+}
+.reason-panel:nth-child(7) .art-slot img{
+  width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+  object-fit:cover!important;object-position:center!important;
+  border-radius:inherit!important;
+}
+/* Bring Mahima's portrait closer to the birthday heading */
+.round-photo{margin-top:12px!important;margin-bottom:36px!important}
+@media(max-width:760px){.round-photo{margin-top:8px!important;margin-bottom:26px!important}}
+</style>
+
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 
 <style>
