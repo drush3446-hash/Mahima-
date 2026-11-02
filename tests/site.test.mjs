@@ -10,10 +10,10 @@ test("the five opening scrapbook scenes exist in order", () => {
   assert.ok(html.indexOf('id="page-4"') < html.indexOf('id="page-5"'));
   assert.ok(html.indexOf('id="page-5"') < html.indexOf('id="letter"'));
 });
-test("the requested copy and November date choices are present", () => {
-  for (const phrase of ["kitty wants to deliver a message!","accept ♡","decline","NOVEMBER","kitty wants to know what day is today","kitty wants you to make a wish before blowing the candle","Dear, Mahima,","10 THINGS I LOVE"]) assert.ok(html.includes(phrase), phrase);
+test("the requested copy and calendar date choices are present", () => {
+  for (const phrase of ["kitty wants to deliver a message!","accept ♡","decline","NOVEMBER","JULY","kitty wants to know what day is today","kitty wants you to make a wish before blowing the candle","Dear, Mahima,","10 THINGS I LOVE"]) assert.ok(html.includes(phrase), phrase);
   assert.match(html, /data-date="08"/);
-  assert.match(html, /data-date="26"/);
+  assert.match(html, /data-date="28"/);
 });
 test("all ten reasons have their own photo collage and numbered panel", () => {
   const panels = html.match(/<article class="reason-panel(?: final-reason)?">/g) || [];
