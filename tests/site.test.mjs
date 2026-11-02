@@ -11,7 +11,7 @@ test("the five opening scrapbook scenes exist in order", () => {
   assert.ok(html.indexOf('id="page-5"') < html.indexOf('id="letter"'));
 });
 test("the requested copy and calendar date choices are present", () => {
-  for (const phrase of ["kitty wants to deliver a message!","accept ♡","decline","NOVEMBER","JULY","kitty wants to know what day is today","kitty wants you to make a wish before blowing the candle","Dear, Mahima,","10 THINGS I LOVE"]) assert.ok(html.includes(phrase), phrase);
+  for (const phrase of ["kitty wants to deliver a message!","accept ♡","decline","SPECIAL DATES ♡","NOV","JUL","kitty wants to know what day is today","kitty wants you to make a wish before blowing the candle","Dear, Mahima,","10 THINGS I LOVE"]) assert.ok(html.includes(phrase), phrase);
   assert.match(html, /data-date="08"/);
   assert.match(html, /data-date="28"/);
 });
