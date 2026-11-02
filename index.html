@@ -422,5 +422,53 @@ $$(".date-choice").forEach(button=>button.addEventListener("click",()=>{$$(".dat
 function blowCandle(){const flame=$("#flame");if(flame.classList.contains("out"))return;flame.classList.add("out");$("#cake-caption").textContent="kitty says your wish is on its way ♡";$("#wish-message").textContent="May this year bring you everything your heart is wishing for. ✨";}
 $("#cake").addEventListener("click",blowCandle);$("#cake").addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();blowCandle();}});
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script>
+(async function loadMahimaPhotos(){
+  const photoStatus = document.createElement("div");
+  photoStatus.setAttribute("aria-live","polite");
+  photoStatus.style.cssText = "position:fixed;bottom:10px;left:10px;z-index:50;padding:7px 11px;border-radius:20px;background:#fffdf0e8;color:#607f98;font:12px Arial;box-shadow:0 3px 12px #526a7e22";
+  photoStatus.textContent = "Loading Mahima's photos…";
+  document.body.appendChild(photoStatus);
+  try {
+    const response = await fetch("./mahima.zip");
+    if (!response.ok) throw new Error("Photo archive could not be loaded");
+    const zip = await JSZip.loadAsync(await response.blob());
+    const files = Object.values(zip.files).filter(f => !f.dir && /\.(jpe?g|png|webp|gif|avif)$/i.test(f.name)).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"}));
+    if (!files.length) throw new Error("No image files found in the archive");
+    const photos = await Promise.all(files.map(async file => ({name:file.name, url:URL.createObjectURL(await file.async("blob"))})));
+    const used = new Set();
+    function choosePhoto(hint){
+      const terms = (hint || "").toLowerCase().split(/[-_\s]+/).filter(Boolean);
+      let found = terms.length ? photos.find(p=>!used.has(p.name) && terms.some(t=>p.name.toLowerCase().includes(t))) : null;
+      if (!found) found = photos.find(p=>!used.has(p.name));
+      if (!found) found = photos[used.size % photos.length];
+      used.add(found.name);
+      return found;
+    }
+    function insertPhoto(slot, hint){
+      const photo = choosePhoto(hint);
+      const img = document.createElement("img");
+      img.src = photo.url;
+      img.alt = "Mahima — " + (hint || photo.name);
+      img.loading = "lazy";
+      img.style.cssText = "width:100%;height:100%;object-fit:contain;display:block;background:#fffdf8";
+      slot.replaceChildren(img);
+      slot.style.background = "#fffdf8";
+      slot.style.padding = "4px";
+      slot.dataset.loadedPhoto = photo.name;
+    }
+    const polaroid = document.querySelector(".polaroid-photo");
+    if (polaroid) insertPhoto(polaroid, "portrait");
+    document.querySelectorAll(".photo-slot").forEach(slot => insertPhoto(slot, slot.dataset.photo || ""));
+    photoStatus.textContent = photos.length + " Mahima photos loaded ♡";
+    setTimeout(()=>photoStatus.remove(),5000);
+  } catch (error) {
+    photoStatus.textContent = "Photos couldn't load — refresh once";
+    console.error("Mahima photo archive:", error);
+  }
+})();
+</script>
 </body>
 </html>
