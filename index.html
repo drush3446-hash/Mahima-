@@ -436,6 +436,9 @@ $("#cake").addEventListener("click",blowCandle);$("#cake").addEventListener("key
 /* Keep every original Mahima photo completely visible without cropping. */
 .photo-slot,.polaroid-photo{overflow:hidden;display:grid;place-items:center}
 .photo-slot img,.polaroid-photo img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center!important;transform:none!important;background:#fffdf8}
+/* Centre the first keepsake photo in its frame; lift the next round photo by 5%. */
+.polaroid-photo img{object-position:50% 50%!important}
+.round-photo{transform:translateY(-5%)}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script>
