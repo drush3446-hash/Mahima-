@@ -482,7 +482,7 @@ async function applyFaceFocus(img,bitmap){
   const zip=await JSZip.loadAsync(await response.blob());
   const files=Object.values(zip.files).filter(f=>!f.dir&&/\.(jpe?g|png|webp|gif|avif)$/i.test(f.name)).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"}));
   if(!files.length)throw new Error("No photos found");
-  const photos=[];for(const file of files){const original=await file.async("blob");const normalized=await normalizePhotoOrientation(original);photos.push({name:file.name,blob:normalized,url:URL.createObjectURL(normalized)})}
+  const photos=[];for(const file of files){const original=await file.async("blob");const ext=file.name.split(".").pop().toLowerCase();const mime=({jpg:"image/jpeg",jpeg:"image/jpeg",png:"image/png",webp:"image/webp",avif:"image/avif",gif:"image/gif"})[ext]||original.type;const sourceBlob=new Blob([original],{type:mime});const normalized=await normalizePhotoOrientation(sourceBlob);photos.push({name:file.name,blob:normalized,url:URL.createObjectURL(normalized)})}
   const used=new Set();
   function termsFor(slot){
    const raw=(slot.dataset.photo||slot.closest(".reason-panel")?.querySelector(".reason-title")?.textContent||"portrait").toLowerCase();
