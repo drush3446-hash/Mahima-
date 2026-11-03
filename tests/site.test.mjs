@@ -72,6 +72,7 @@ test("photo rendering preserves full images and handles EXIF orientation safely"
   assert.match(html, /normalizePhotoOrientation/);
   assert.match(html, /imageOrientation:\\s*["']from-image["']/);
   assert.match(html, /createImageBitmap/);
+  assert.match(html, /new Blob\(\[original\],\{type:mime\}\)/);
   assert.match(html, /canvas\\.toBlob/);
   assert.match(html, /FaceDetector/);
   assert.match(html, /@media\\s*\\(max-width:\\s*760px\\)/);
