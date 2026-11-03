@@ -68,12 +68,13 @@ test("the ten-things section keeps Mahima photo slots empty and uses supplied ar
 });
 
 test("photo rendering preserves full images and handles EXIF orientation safely", () => {
-  assert.match(html, /object-fit:\\s*contain\\s*!important/);
+  assert.match(html, /object-fit:\s*contain\s*!important/);
   assert.match(html, /normalizePhotoOrientation/);
   assert.match(html, /imageOrientation:\\s*["']from-image["']/);
   assert.match(html, /createImageBitmap/);
   assert.match(html, /new Blob\(\[original\],\{type:mime\}\)/);
-  assert.match(html, /canvas\\.toBlob/);
+  assert.match(html, /canvas\.toBlob/);
   assert.match(html, /FaceDetector/);
-  assert.match(html, /@media\\s*\\(max-width:\\s*760px\\)/);
+  assert.match(html, /@media\s*\(max-width:\s*760px\)/);
+  assert.equal((html.match(/querySelectorAll\("\.polaroid-photo,\.round-photo \.photo-slot,\.reason-panel \.photo-slot"\)/g) || []).length, 1);
 });
