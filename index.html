@@ -437,7 +437,7 @@ $("#cake").addEventListener("click",blowCandle);$("#cake").addEventListener("key
 .photo-slot,.polaroid-photo{overflow:hidden;display:grid;place-items:center;min-width:0}
 .photo-slot img,.polaroid-photo img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center center!important;transform:none!important;background:#fffdf8}
 .photo-slot img.face-focused,.polaroid-photo img.face-focused{object-position:var(--face-x,50%) var(--face-y,35%)!important}
-@media(max-width:760px){.photo-slot,.polaroid-photo{height:auto;min-height:clamp(160px,52vw,240px)}.photo-slot img,.polaroid-photo img{width:100%!important;height:100%!important;object-fit:contain!important}}
+@media(max-width:760px){.photo-slot{height:auto;min-height:clamp(160px,52vw,240px)}.polaroid-photo{height:clamp(170px,52vw,220px)}.photo-slot img,.polaroid-photo img{width:100%!important;height:100%!important;object-fit:contain!important}}
 .polaroid{transform:rotate(0deg)!important}
 .round-photo{width:230px;height:230px;margin:12px auto 24px;transform:translateY(-5%)}
 .round-photo .photo-slot img{object-fit:contain!important}
