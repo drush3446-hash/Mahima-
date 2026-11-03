@@ -433,17 +433,77 @@ $("#cake").addEventListener("click",blowCandle);$("#cake").addEventListener("key
 
 
 <style>
-/* Keep every original Mahima photo completely visible without cropping. */
-.photo-slot,.polaroid-photo{overflow:hidden;display:grid;place-items:center}
-.photo-slot img,.polaroid-photo img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center!important;transform:none!important;background:#fffdf8}
-/* Centre the first keepsake photo in its frame; lift the next round photo by 5%. */
+/* Safe default: preserve the entire photo; never cut off a face or body. */
+.photo-slot,.polaroid-photo{overflow:hidden;display:grid;place-items:center;min-width:0}
+.photo-slot img,.polaroid-photo img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center center!important;transform:none!important;background:#fffdf8}
+.photo-slot img.face-focused,.polaroid-photo img.face-focused{object-position:var(--face-x,50%) var(--face-y,35%)!important}
+@media(max-width:760px){.photo-slot,.polaroid-photo{height:auto;min-height:clamp(160px,52vw,240px)}.photo-slot img,.polaroid-photo img{width:100%!important;height:100%!important;object-fit:contain!important}}
 .polaroid{transform:rotate(0deg)!important}
-.polaroid-photo img{object-position:50% 50%!important}
 .round-photo{width:230px;height:230px;margin:12px auto 24px;transform:translateY(-5%)}
-.round-photo .photo-slot img{object-fit:contain!important;object-position:center!important}
-.reason-list>.reason-panel:first-child .photo-slot img{object-position:50% 0%!important}
+.round-photo .photo-slot img{object-fit:contain!important}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script>
+async function normalizePhotoOrientation(blob){
+ if(!blob || !/^image\/(jpeg|png|webp|avif)$/i.test(blob.type||"")) return blob;
+ let bitmap=null,canvas=null;
+ try{
+  if(typeof createImageBitmap==="function"){
+   try{bitmap=await createImageBitmap(blob,{imageOrientation:"from-image"})}
+   catch(_){bitmap=await createImageBitmap(blob)}
+  }else{
+   const tempUrl=URL.createObjectURL(blob);
+   try{const image=new Image();image.src=tempUrl;await image.decode();canvas=document.createElement("canvas");canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;const ctx=canvas.getContext("2d");if(!ctx)throw new Error("Canvas unavailable");ctx.drawImage(image,0,0)}
+   finally{URL.revokeObjectURL(tempUrl)}
+  }
+  if(bitmap){canvas=document.createElement("canvas");canvas.width=bitmap.width;canvas.height=bitmap.height;const ctx=canvas.getContext("2d");if(!ctx)throw new Error("Canvas unavailable");ctx.drawImage(bitmap,0,0);bitmap.close?.()}
+  if(!canvas)return blob;
+  const type=blob.type==="image/png"?"image/png":blob.type==="image/webp"?"image/webp":"image/jpeg";
+  const normalized=await new Promise(resolve=>canvas.toBlob(resolve,type,type==="image/jpeg"?.94:undefined));
+  return normalized||blob;
+ }catch(error){console.warn("[Mahima photos] Orientation normalization fallback:",error);bitmap?.close?.();return blob}
+}
+async function applyFaceFocus(img,bitmap){
+ if(typeof FaceDetector!=="function"||!bitmap)return;
+ try{
+  const detector=new FaceDetector({fastMode:true,maxDetectedFaces:1});
+  const faces=await detector.detect(bitmap);if(!faces.length)return;
+  const box=faces[0].boundingBox;
+  const x=Math.max(0,Math.min(100,((box.x+box.width/2)/bitmap.width)*100));
+  const y=Math.max(0,Math.min(100,(box.y/bitmap.height)*100));
+  img.style.setProperty("--face-x",x+"%");img.style.setProperty("--face-y",y+"%");
+  img.classList.add("face-focused");
+ }catch(_){/* Unsupported device or no detectable face: keep full image visible. */}
+}
+(async function(){
+ const slots=[...document.querySelectorAll(".polaroid-photo,.round-photo .photo-slot,.reason-panel .photo-slot")];
+ try{
+  const response=await fetch("./mahima.zip");if(!response.ok)throw new Error("Photo archive unavailable");
+  if(typeof JSZip==="undefined")throw new Error("ZIP reader unavailable");
+  const zip=await JSZip.loadAsync(await response.blob());
+  const files=Object.values(zip.files).filter(f=>!f.dir&&/\.(jpe?g|png|webp|gif|avif)$/i.test(f.name)).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"}));
+  if(!files.length)throw new Error("No photos found");
+  const photos=[];for(const file of files){const original=await file.async("blob");const normalized=await normalizePhotoOrientation(original);photos.push({name:file.name,blob:normalized,url:URL.createObjectURL(normalized)})}
+  const used=new Set();
+  function termsFor(slot){
+   const raw=(slot.dataset.photo||slot.closest(".reason-panel")?.querySelector(".reason-title")?.textContent||"portrait").toLowerCase();
+   const words=[raw.replace(/[^a-z0-9]+/g," ")];
+   if(/eye/.test(raw))words.push("eyes","eye");if(/smile/.test(raw))words.push("smile","smiling");if(/laugh/.test(raw))words.push("laugh","happy");if(/heart|kind/.test(raw))words.push("heart","kind","love");if(/habit/.test(raw))words.push("habit","cute");if(/strength/.test(raw))words.push("strength","strong");if(/voice/.test(raw))words.push("voice");if(/dream/.test(raw))words.push("dream");if(/presence/.test(raw))words.push("presence");
+   return words;
+  }
+  function pick(slot,index){
+   const terms=termsFor(slot);let best=-1,score=0;
+   photos.forEach((photo,j)=>{if(used.has(j))return;const name=photo.name.toLowerCase().replace(/[^a-z0-9]+/g," ");const value=terms.reduce((sum,term)=>sum+(term&&name.includes(term)?1:0),0);if(value>score){score=value;best=j}});
+   if(best<0)best=photos.findIndex((_,j)=>!used.has(j));if(best<0)best=index%photos.length;used.add(best);return best;
+  }
+  for(let i=0;i<slots.length;i++){
+   const slot=slots[i],photo=photos[pick(slot,i)],img=document.createElement("img");
+   img.src=photo.url;img.alt="Mahima photo";img.loading="lazy";img.decoding="async";slot.replaceChildren(img);
+   img.addEventListener("load",async()=>{if(typeof createImageBitmap==="function"){try{const bitmap=await createImageBitmap(photo.blob,{imageOrientation:"from-image"});await applyFaceFocus(img,bitmap);bitmap.close?.()}catch(_){}}},{once:true});
+  }
+  console.info("[Mahima photos] "+photos.length+" photos normalized and assigned to "+slots.length+" frames.");
+ }catch(error){console.error("[Mahima photos]",error)}
+})();
+</script>
 <script>
 (async function(){
  const slots=[...document.querySelectorAll(".polaroid-photo,.round-photo .photo-slot,.reason-panel .photo-slot")];
