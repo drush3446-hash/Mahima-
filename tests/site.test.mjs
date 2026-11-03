@@ -66,3 +66,13 @@ test("the ten-things section keeps Mahima photo slots empty and uses supplied ar
   assert.match(html, /reason-panel:nth-child\(even\):has\(\.reason-number\)::after/);
   assert.match(html, /@media\(max-width:760px\)/);
 });
+
+test("photo rendering preserves full images and handles EXIF orientation safely", () => {
+  assert.match(html, /object-fit:\\s*contain\\s*!important/);
+  assert.match(html, /normalizePhotoOrientation/);
+  assert.match(html, /imageOrientation:\\s*["']from-image["']/);
+  assert.match(html, /createImageBitmap/);
+  assert.match(html, /canvas\\.toBlob/);
+  assert.match(html, /FaceDetector/);
+  assert.match(html, /@media\\s*\\(max-width:\\s*760px\\)/);
+});
