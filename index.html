@@ -504,40 +504,6 @@ async function applyFaceFocus(img,bitmap){
  }catch(error){console.error("[Mahima photos]",error)}
 })();
 </script>
-<script>
-(async function(){
- const slots=[...document.querySelectorAll(".polaroid-photo,.round-photo .photo-slot,.reason-panel .photo-slot")];
- try{
-  const response=await fetch("./mahima.zip");if(!response.ok)throw new Error("Photo archive unavailable");
-  if(typeof JSZip==="undefined")throw new Error("ZIP reader unavailable");
-  const zip=await JSZip.loadAsync(await response.blob());
-  const files=Object.values(zip.files).filter(f=>!f.dir&&/\.(jpe?g|png|webp|gif|avif)$/i.test(f.name)).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"}));
-  if(!files.length)throw new Error("No photos found");
-  const photos=[];for(const f of files)photos.push({name:f.name,url:URL.createObjectURL(await f.async("blob"))});
-  const used=new Set();
-  function termsFor(slot){
-   const raw=(slot.dataset.photo||slot.closest(".reason-panel")?.querySelector(".reason-title")?.textContent||"portrait").toLowerCase();
-   const words=[raw.replace(/[^a-z0-9]+/g," ")];
-   if(/eye/.test(raw))words.push("eyes","eye");
-   if(/smile/.test(raw))words.push("smile","smiling");
-   if(/laugh/.test(raw))words.push("laugh","happy");
-   if(/heart|kind/.test(raw))words.push("heart","kind","love");
-   if(/habit/.test(raw))words.push("habit","cute");
-   if(/strength/.test(raw))words.push("strength","strong");
-   if(/voice/.test(raw))words.push("voice");
-   if(/dream/.test(raw))words.push("dream");
-   if(/presence/.test(raw))words.push("presence");
-   return words;
-  }
-  function pick(slot,index){
-   const terms=termsFor(slot);let best=-1,score=0;
-   photos.forEach((p,j)=>{if(used.has(j))return;const n=p.name.toLowerCase().replace(/[^a-z0-9]+/g," ");const v=terms.reduce((a,t)=>a+(t&&n.includes(t)?1:0),0);if(v>score){score=v;best=j}});
-   if(best<0)best=photos.findIndex((_,j)=>!used.has(j));if(best<0)best=index%photos.length;used.add(best);return best;
-  }
-  slots.forEach((slot,i)=>{const p=photos[pick(slot,i)],img=document.createElement("img");img.src=p.url;img.alt="Mahima photo";img.loading="lazy";slot.replaceChildren(img)});
-  console.info("[Mahima photos] "+photos.length+" archive photos assigned to "+slots.length+" frames.");
- }catch(e){console.error("[Mahima photos]",e)}
-})();
-</script>
+
 </body>
 </html>
